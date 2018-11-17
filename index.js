@@ -64,8 +64,6 @@ const InProgressJobHandler = {
     },
     handle(handlerInput) {
         const currentIntent = handlerInput.requestEnvelope.request.intent;
-        const request = handlerInput.requestEnvelope.request;
-
         let prompt = '';
 
         for (const slotName in currentIntent.slots) {
@@ -385,29 +383,6 @@ const YesHandler = {
             .getResponse();
     }
 }
-
-const ResetHandler = {
-    canHandle(handlerInput) {
-        return handlerInput.requestEnvelope.request.type === "IntentRequest" &&
-            handlerInput.requestEnvelope.request.intent.name === "Reset";
-    },
-    async handle(handlerInput) {
-        const request = handlerInput.requestEnvelope.request;
-        const responseBuilder = handlerInput.responseBuilder;
-        const attributesManager = handlerInput.attributesManager;
-        const sessionAttribute = attributesManager.getSessionAttributes();
-        sessionAttribute.TotalLetters = 2; //first time
-        speechText = `It's Monday. Let me sort out the letters for delivery today. Hurry, there are just two letters to be delivered. First letter to Door one and Second letter to Door two. `
-        attributesManager.setSessionAttributes(sessionAttribute); //session attributes
-        attributesManager.setPersistentAttributes(sessionAttribute); //persistance attributes
-        await attributesManager.savePersistentAttributes();
-
-        return handlerInput.responseBuilder
-            .speak(speechText)
-            .reprompt(speechText)
-            .getResponse();
-    }
-};
 
 const FallbackHandler = {
     canHandle(handlerInput) {
