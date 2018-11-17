@@ -222,51 +222,47 @@ const InProgressDeliveredHandler = {
         const request = handlerInput.requestEnvelope.request;
         const attributes = handlerInput.attributesManager.getSessionAttributes();
         let prompt = '';
-        if (!attributes.currentAvenger) {
-            for (const slotName in currentIntent.slots) {
-                if (Object.prototype.hasOwnProperty.call(currentIntent.slots, slotName)) {
-                    const currentSlot = currentIntent.slots[slotName];
-                    if (currentSlot.confirmationStatus !== 'CONFIRMED'
-                        && currentSlot.resolutions
-                        && currentSlot.resolutions.resolutionsPerAuthority[0]) {
-                        if (currentSlot.resolutions.resolutionsPerAuthority[0].status.code === 'ER_SUCCESS_MATCH') {
-                            if (currentSlot.resolutions.resolutionsPerAuthority[0].values.length > 1) {
-                                prompt = 'Please specify one of them ';
-                                const size = currentSlot.resolutions.resolutionsPerAuthority[0].values.length;
+        for (const slotName in currentIntent.slots) {
+            if (Object.prototype.hasOwnProperty.call(currentIntent.slots, slotName)) {
+                const currentSlot = currentIntent.slots[slotName];
+                if (currentSlot.confirmationStatus !== 'CONFIRMED'
+                    && currentSlot.resolutions
+                    && currentSlot.resolutions.resolutionsPerAuthority[0]) {
+                    if (currentSlot.resolutions.resolutionsPerAuthority[0].status.code === 'ER_SUCCESS_MATCH') {
+                        if (currentSlot.resolutions.resolutionsPerAuthority[0].values.length > 1) {
+                            prompt = 'Please specify one of them ';
+                            const size = currentSlot.resolutions.resolutionsPerAuthority[0].values.length;
 
-                                currentSlot.resolutions.resolutionsPerAuthority[0].values
-                                    .forEach((element, index) => {
-                                        prompt += ` ${(index === size - 1) ? ' or' : ' '} ${element.value.name}`;
-                                    });
+                            currentSlot.resolutions.resolutionsPerAuthority[0].values
+                                .forEach((element, index) => {
+                                    prompt += ` ${(index === size - 1) ? ' or' : ' '} ${element.value.name}`;
+                                });
 
-                                prompt += '?';
+                            prompt += '?';
 
-                                return handlerInput.responseBuilder
-                                    .speak(prompt)
-                                    .reprompt(prompt)
-                                    .addElicitSlotDirective(currentSlot.name)
-                                    .getResponse();
-                            }
-                        } else if (currentSlot.resolutions.resolutionsPerAuthority[0].status.code === 'ER_SUCCESS_NO_MATCH') {
-                            if (requiredSlots.indexOf(currentSlot.name) > -1) {
-                                prompt = `What ${currentSlot.name} are you looking for`;
+                            return handlerInput.responseBuilder
+                                .speak(prompt)
+                                .reprompt(prompt)
+                                .addElicitSlotDirective(currentSlot.name)
+                                .getResponse();
+                        }
+                    } else if (currentSlot.resolutions.resolutionsPerAuthority[0].status.code === 'ER_SUCCESS_NO_MATCH') {
+                        if (requiredSlots.indexOf(currentSlot.name) > -1) {
+                            prompt = `What ${currentSlot.name} are you looking for`;
 
-                                return handlerInput.responseBuilder
-                                    .speak(prompt)
-                                    .reprompt(prompt)
-                                    .addElicitSlotDirective(currentSlot.name)
-                                    .getResponse();
-                            }
+                            return handlerInput.responseBuilder
+                                .speak(prompt)
+                                .reprompt(prompt)
+                                .addElicitSlotDirective(currentSlot.name)
+                                .getResponse();
                         }
                     }
                 }
             }
-            return handlerInput.responseBuilder
-                .addDelegateDirective(currentIntent)
-                .getResponse();
-        } else {
-            return DeliveredHandler.handle(handlerInput);
         }
+        return handlerInput.responseBuilder
+            .addDelegateDirective(currentIntent)
+            .getResponse();
     }
 };
 
@@ -289,14 +285,19 @@ const DeliveredHandler = {
             && request.intent.slots.Name.resolutions.resolutionsPerAuthority[0].status.code === 'ER_SUCCESS_MATCH'
             && request.intent.slots.Name.value !== "?" && request.intent.slots.Name.value) {
             let name = request.intent.slots.Name.resolutions.resolutionsPerAuthority[0].values[0].value.name;
+            let number = request.intent.slots.Number.value;
             if (attributes && attributes.FirstTime) {
                 if (name == "Iron Man" && attributes.IronMan) {
                     if (attributes.IronMan.status == true) {
                         speechText += `Hey! Iron Man! You were alotted the letter one and you have already delivered it.`
                     } else {
-                        attributes.IronMan.status = true;
-                        speechText += `Great. Enjoy rest of your day!`
-                        endSession = true;
+                        if (request.intent.slots.Number.value == 2) {
+                            speechText += `Hey! Iron Man! You were alotted the letter one! You will have to say I delivered letter one along with your name`
+                        }else {
+                            attributes.IronMan.status = true;
+                            speechText += `Great. Enjoy rest of your day!`
+                            endSession = true;
+                        }
                     }
                 } else if (name == "Iron Man") {
                     speechText += `Sorry! Iron Man you haven't been assigned any letter yet! Please ask for your job along with your name! `
@@ -304,9 +305,14 @@ const DeliveredHandler = {
                     if (attributes.SpiderMan.status == true) {
                         speechText += `Hey! Spider Man! You were alotted the letter two and you have already delivered it.`
                     } else {
-                        attributes.SpiderMan.status = true;
-                        speechText += `Wonderful. Enjoy your rest of the evening. `
-                        endSession = true;
+                        if (request.intent.slots.Number.value == "1") {
+                            speechText += `Hey! Spider Man! You were alotted the letter two! You will have to say I delivered letter two along with your name`
+
+                        } else {
+                            attributes.SpiderMan.status = true;
+                            speechText += `Wonderful. Enjoy your rest of the evening. `
+                            endSession = true;
+                        }
                     }
                 } else if (name == "Spider Man") {
                     speechText += `Sorry! Spider Man you haven't been assigned any letter yet! Please ask for your job along with your name! `
@@ -325,27 +331,8 @@ const DeliveredHandler = {
                     speechText += `Sorry, I didn't get you! Can you please tell me the name again?`;
                 }
             }
-        } else if (sessionAttribute.currentAvenger) {
-            if (sessionAttribute.currentAvenger == "Iron Man" && attributes.IronMan) {
-                if (attributes.IronMan.status == true) {
-                    speechText += `Hey! Iron Man! You were alotted the letter one and you have already delivered it.`
-                    endSession = true;
-                } else {
-                    attributes.IronMan.status = true;
-                    speechText += `Great. Enjoy rest of your day! `
-                }
-            } else if (sessionAttribute.currentAvenger == "Spider Man" && attributes.SpiderMan) {
-                if (attributes.SpiderMan.status == true) {
-                    speechText += `Hey! Spider Man! You were alotted the letter two and you have already delivered it.`
-                    endSession = true;
-                } else {
-                    attributes.SpiderMan.status = true;
-                    speechText += `Wonderful. Enjoy your rest of the evening. `
-                }
-            } else {
-                speechText += `Sorry! I didn't get you? Please say again? `;
-            }
-        } else {
+        }
+        else {
             speechText += `Sorry! I didn't get your name. Can you please repeat again?`
         }
         handlerInput.attributesManager.setSessionAttributes(sessionAttribute);
@@ -462,7 +449,6 @@ exports.handler = standardSkillBuilder
         JobHandler,
         InProgressDeliveredHandler,
         DeliveredHandler,
-        ResetHandler,
         YesHandler,
         FallbackHandler,
         CancelAndStopIntentHandler,
