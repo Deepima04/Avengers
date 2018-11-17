@@ -1,0 +1,198 @@
+{
+    "interactionModel": {
+        "languageModel": {
+            "invocationName": "avengers",
+            "intents": [
+                {
+                    "name": "AMAZON.FallbackIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.CancelIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.HelpIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.StopIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.NavigateHomeIntent",
+                    "samples": []
+                },
+                {
+                    "name": "JobIntent",
+                    "slots": [
+                        {
+                            "name": "Name",
+                            "type": "Name",
+                            "samples": [
+                                "i'm {Name}",
+                                "i am {Name}",
+                                "my name is {Name}"
+                            ]
+                        }
+                    ],
+                    "samples": [
+                        "what should i do today",
+                        "what is my job today",
+                        "what is my job",
+                        "what's my task",
+                        "I am {Name} tell me my job for today",
+                        "tell me my job for today",
+                        "please tell me my job for today",
+                        "what is my job for today",
+                        "what's my job for today",
+                        "Hey what's my job for today"
+                    ]
+                },
+                {
+                    "name": "DeliverIntent",
+                    "slots": [
+                        {
+                            "name": "Name",
+                            "type": "Name",
+                            "samples": [
+                                "{Name}",
+                                "my name is {Name}",
+                                "i am {Name}"
+                            ]
+                        },
+                        {
+                            "name": "Number",
+                            "type": "AMAZON.NUMBER"
+                        }
+                    ],
+                    "samples": [
+                        "i have done the delivery of the letter",
+                        "i have delivered the letter",
+                        "i have delivered letter",
+                        "i have delivered",
+                        "i have delivered letter number {Number}",
+                        "My name is {Name} i have delivered letter number {Number}",
+                        "My name is {Name} i have delivered letter {Number}"
+                    ]
+                },
+                {
+                    "name": "AMAZON.YesIntent",
+                    "samples": [
+                        "okay i'll do that",
+                        "okay i will do that",
+                        "awesome",
+                        "that's awesome",
+                        "that's okay",
+                        "sound cool",
+                        "okay",
+                        "that's cool"
+                    ]
+                },
+                {
+                    "name": "Reset",
+                    "slots": [],
+                    "samples": [
+                        "i need to reset",
+                        "i want to reset",
+                        "can you please reset",
+                        "please reset",
+                        "to reset",
+                        "reset please",
+                        "reset"
+                    ]
+                }
+            ],
+            "types": [
+                {
+                    "name": "Name",
+                    "values": [
+                        {
+                            "name": {
+                                "value": "Spider Man",
+                                "synonyms": [
+                                    "spider"
+                                ]
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "Iron Man",
+                                "synonyms": [
+                                    "iron"
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        "dialog": {
+            "intents": [
+                {
+                    "name": "JobIntent",
+                    "confirmationRequired": false,
+                    "prompts": {},
+                    "slots": [
+                        {
+                            "name": "Name",
+                            "type": "Name",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.590354351208.118057376390"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "DeliverIntent",
+                    "confirmationRequired": false,
+                    "prompts": {},
+                    "slots": [
+                        {
+                            "name": "Name",
+                            "type": "Name",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.1451420926228.1413605548402"
+                            }
+                        },
+                        {
+                            "name": "Number",
+                            "type": "AMAZON.NUMBER",
+                            "confirmationRequired": false,
+                            "elicitationRequired": false,
+                            "prompts": {}
+                        }
+                    ]
+                }
+            ]
+        },
+        "prompts": [
+            {
+                "id": "Elicit.Slot.590354351208.118057376390",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Please tell me your name, so that i can alot you the job?"
+                    },
+                    {
+                        "type": "PlainText",
+                        "value": "Please tell me your name?"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.1451420926228.1413605548402",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Please tell me your name?"
+                    }
+                ]
+            }
+        ]
+    }
+}
