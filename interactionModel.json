@@ -67,6 +67,8 @@
                         }
                     ],
                     "samples": [
+                        "letter number {Number} delivered",
+                        "letter {Number} delivered",
                         "i have done the delivery of the letter",
                         "i have delivered the letter",
                         "i have delivered letter",
@@ -87,19 +89,6 @@
                         "sound cool",
                         "okay",
                         "that's cool"
-                    ]
-                },
-                {
-                    "name": "Reset",
-                    "slots": [],
-                    "samples": [
-                        "i need to reset",
-                        "i want to reset",
-                        "can you please reset",
-                        "please reset",
-                        "to reset",
-                        "reset please",
-                        "reset"
                     ]
                 }
             ],
